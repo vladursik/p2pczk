@@ -1,12 +1,12 @@
 {
   "273656279": {
     "chat_id": 273656279,
-    "username": "xxxmsip",
-    "first_name": ".",
+    "username": "urs_vlad",
+    "first_name": "Vlad",
     "active": true,
     "monitoring": true,
     "registered_at": "2026-05-08T22:36:14.701985",
-    "last_seen": "2026-09-10T20:59:12.264171",
+    "last_seen": "2026-09-22T21:00:50.481475",
     "buy_threshold": 44.0,
     "sell_threshold": 47.0,
     "min_amount_uah": 5000,
@@ -17,16 +17,7 @@
       "Durace1l::mono",
       "BlackCardinal7007::privat"
     ],
-    "blacklist_sell": [
-      "HA6OP_B_KOMAHDY_1::privat",
-      "Ka1ips0::privat",
-      "unreleased8181::privat",
-      "P2P-151f96gp::privat",
-      "unreleased8181::pumb",
-      "P2P-151f96gp::pumb",
-      "HA6OP_B_KOMAHDY_107::privat",
-      "Tg-ObminOdessa::privat"
-    ],
+    "blacklist_sell": [],
     "sell_card_threshold": 44.6,
     "blacklist_sell_card": [
       "USDTselleer",
@@ -83,9 +74,9 @@
     "username": "emchenkoss",
     "first_name": "emchenkoss",
     "active": true,
-    "monitoring": true,
+    "monitoring": false,
     "registered_at": "2026-05-08T22:41:24.872094",
-    "last_seen": "2026-09-08T17:28:08.702390",
+    "last_seen": "2026-09-22T18:41:33.311711",
     "buy_threshold": 44.0,
     "sell_threshold": 46.5,
     "min_amount_uah": 70989898676,

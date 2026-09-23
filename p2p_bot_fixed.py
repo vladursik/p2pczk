@@ -223,6 +223,7 @@ BANK_LABELS = {
     "ukrgaz":  "Укргазбанк",
     "sense":   "Sense Bank",
     "paysend": "PaySend",
+    "iban":    "IBAN",
 }
 BANK_KEYWORDS = {
     "mono":    ["monobank", "mono"],
@@ -236,9 +237,17 @@ BANK_KEYWORDS = {
     # спосіб оплати в Binance може стояти карта іншого банку (Privat тощо).
     # Тому ці ключові слова шукаються і в тексті умов, див. get_binance_p2p.
     "paysend": ["paysend", "pay send", "пейсенд", "пэйсенд", "пайсенд", "пэй сенд", "пей сенд"],
+    # IBAN так само практично ніколи не приходить окремим tradeMethod —
+    # мейкери пишуть про оплату на IBAN-рахунок прямо в умовах (remarks).
+    # Тому, як і PaySend, шукається і в способах оплати, і в тексті умов.
+    "iban":    ["iban", "ібан", "ибан"],
 }
-DEFAULT_ENABLED_BANKS = {"mono": True, "privat": True, "abank": True, "pumb": True, "ukrgaz": True, "sense": True, "paysend": True}
-BANK_ORDER = ["mono", "privat", "abank", "pumb", "ukrgaz", "sense", "paysend"]
+DEFAULT_ENABLED_BANKS = {"mono": True, "privat": True, "abank": True, "pumb": True, "ukrgaz": True, "sense": True, "paysend": True, "iban": True}
+BANK_ORDER = ["mono", "privat", "abank", "pumb", "ukrgaz", "sense", "paysend", "iban"]
+
+# Банки/методи, для яких умови ордера (remarks) шукаємо в доповнення до
+# способів оплати Binance, бо як окремий tradeMethod вони майже не зустрічаються.
+BANKS_MATCH_IN_REMARKS = {"paysend", "iban"}
 
 def get_enabled_banks(ud: dict) -> dict:
     eb = (ud or {}).get("enabled_banks")
@@ -474,9 +483,9 @@ def get_binance_p2p(trade_type: str, user_data: dict):
             for bank_key in BANK_ORDER:
                 if not enabled_banks.get(bank_key, True):
                     continue
-                # PaySend шукаємо і в способах оплати, і в умовах ордера —
+                # PaySend та IBAN шукаємо і в способах оплати, і в умовах ордера —
                 # решту банків, як і раніше, тільки в способах оплати.
-                haystack = (pay_methods_text + " " + remarks_lower) if bank_key == "paysend" else pay_methods_text
+                haystack = (pay_methods_text + " " + remarks_lower) if bank_key in BANKS_MATCH_IN_REMARKS else pay_methods_text
                 if any(kw in haystack for kw in BANK_KEYWORDS[bank_key]):
                     matched_banks.append(bank_key)
             if not matched_banks:
@@ -486,13 +495,15 @@ def get_binance_p2p(trade_type: str, user_data: dict):
                 )
                 continue
 
-            # Пріоритет — PaySend, якщо він серед збігів: якщо в умовах
-            # ордера прямо згадано PaySend, це і є реальний спосіб
-            # оплати, навіть якщо Binance показує карту іншого банку
+            # Пріоритет — PaySend або IBAN, якщо вони серед збігів: якщо в
+            # умовах ордера прямо згадано PaySend/IBAN, це і є реальний
+            # спосіб оплати, навіть якщо Binance показує карту іншого банку
             # (Privat/тощо) як tradeMethod. Інакше — банк БЕЗ
             # спецправила по API (Monobank), якщо такий є серед збігів.
             if "paysend" in matched_banks:
                 matched_bank = "paysend"
+            elif "iban" in matched_banks:
+                matched_bank = "iban"
             else:
                 unrestricted = [b for b in matched_banks if b not in BANK_REQUIRES_API]
                 matched_bank = unrestricted[0] if unrestricted else matched_banks[0]
@@ -1515,5 +1526,11 @@ if __name__ == "__main__":
     logger.info("Бот запускається (мультикористувацький режим)...")
     threading.Thread(target=monitor_thread, daemon=True).start()
     threading.Thread(target=czk_alert_thread, daemon=True).start()
+    try:
+        bot.remove_webhook()
+        logger.info("Webhook знято (якщо був встановлений)")
+    except Exception as e:
+        logger.warning(f"Не вдалось знімати webhook (можливо, і не було потреби): {e}")
+
     logger.info("Polling запущено")
     bot.infinity_polling()
