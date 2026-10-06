@@ -6,7 +6,7 @@
     "active": true,
     "monitoring": true,
     "registered_at": "2026-05-08T22:36:14.701985",
-    "last_seen": "2026-09-22T21:00:50.481475",
+    "last_seen": "2026-10-06T20:41:32.173192",
     "buy_threshold": 44.0,
     "sell_threshold": 47.0,
     "min_amount_uah": 5000,
@@ -50,7 +50,39 @@
       "paysend": true
     },
     "min_amount_sell_paysend": 200,
-    "czk_spread_threshold": 2.0
+    "czk_spread_threshold": 2.0,
+    "czk_my_sell": 22.4,
+    "czk_my_buy": 21.08,
+    "czk_watch": {
+      "buy": true,
+      "sell": true,
+      "nicks": [
+        {
+          "name": "RZVN_USDT01",
+          "enabled": true
+        },
+        {
+          "name": "BLITZ_Exchange-UKR",
+          "enabled": true
+        },
+        {
+          "name": "__QUEEN__",
+          "enabled": true
+        },
+        {
+          "name": "ZAKONp2p",
+          "enabled": true
+        },
+        {
+          "name": "RZVN_USDT",
+          "enabled": true
+        },
+        {
+          "name": "american_ter",
+          "enabled": true
+        }
+      ]
+    }
   },
   "6477920477": {
     "chat_id": 6477920477,
