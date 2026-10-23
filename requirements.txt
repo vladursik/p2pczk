@@ -1,0 +1,6 @@
+requests
+python-telegram-bot
+pyTelegramBotAPI
+aiohttp
+urllib3
+python-dotenv
