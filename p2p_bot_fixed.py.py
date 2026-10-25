@@ -208,12 +208,13 @@ BANK_REQUIRES_API = {"mono"}
 # API-ключем") — для Monobank такі оголошення показуємо (це і є весь сенс
 # фільтра вище). Для решти банків ФОП/ТОВ фільтр працює як і раніше,
 # без жодних виключень по API.
-API_TOKEN_KEYWORDS = [
-    "api-токен", "api токен", "апі-токен", "апі токен",
-    "api-token", "api token", "апи-токен", "апи токен",
-    "api-ключ", "api ключ", "апі-ключ", "апі ключ",
-    "апи-ключ", "апи ключ", "api-key", "api key",
-]
+# Регулярний вираз замість точного списку слів: ловить "api"/"апі"/"арі"/"апи"
+# (латиниця, кирилиця та їх суміш), будь-які пробіли/дефіси/тире між словами
+# ("API - токен", "АРІ–токен", "api токена") та слова токен/ключ/token/key.
+_API_PART  = r"[aа][pрп][iіиї1l]"
+_API_SEP   = r"[\s\-\u2010-\u2015\u2212_/.:]{0,3}"
+_API_WORD  = r"(?:ток[еє]н|token|ключ|key)"
+API_TOKEN_RE = re.compile(_API_PART + _API_SEP + _API_WORD)
 
 # ==================== БАНКИ (per user toggle) ====================
 
@@ -556,7 +557,7 @@ def get_binance_p2p(trade_type: str, user_data: dict):
             ]))
 
             is_fop      = any(word in all_text for word in FOP_KEYWORDS)
-            has_api_tok = any(kw in all_text for kw in API_TOKEN_KEYWORDS)
+            has_api_tok = bool(API_TOKEN_RE.search(all_text))
 
             if trade_type == "SELL" and matched_bank in BANK_REQUIRES_API:
                 # Monobank на продаж: єдиний критерій — явна згадка API-токена/ключа.
