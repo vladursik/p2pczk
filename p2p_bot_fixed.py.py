@@ -214,7 +214,10 @@ BANK_REQUIRES_API = {"mono"}
 _API_PART  = r"[aа][pрп][iіиї1l]"
 _API_SEP   = r"[\s\-\u2010-\u2015\u2212_/.:]{0,3}"
 _API_WORD  = r"(?:ток[еє]н|token|ключ|key)"
-API_TOKEN_RE = re.compile(_API_PART + _API_SEP + _API_WORD)
+# Окреме слово "API" без слова "токен" ("Моно по API", "оплата через API") —
+# теж рахується. Межі слова: щоб не ловити "капітал", "апісний" тощо.
+_API_ALONE = r"(?<![0-9a-zа-яіїєґ])[aа][pрп][iіиї](?![0-9a-zа-яіїєґ])"
+API_TOKEN_RE = re.compile(_API_PART + _API_SEP + _API_WORD + "|" + _API_ALONE)
 
 # ==================== БАНКИ (per user toggle) ====================
 
